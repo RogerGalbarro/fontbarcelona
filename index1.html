@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emprova la font com vulguis!</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .cabecera {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin: 0;
+      flex-grow: 1;
+    }
+
+    .info-btn, .mode-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .info-btn,
+    body.dark-mode .mode-btn {
+      background-color: #1a73e8;
+      color: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      font-size: 1.2rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      resize: vertical;
+      background-color: white;
+      color: black;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode textarea {
+      background-color: #222;
+      color: #eee;
+      border-color: #555;
+    }
+
+    .resultado {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .linea {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .palabra {
+      display: flex;
+      gap: 0px;
+    }
+
+    .letra-container {
+      position: relative;
+      display: inline-block;
+      margin-right: 0;
+    }
+
+    .letra {
+      height: 60px;
+      display: block;
+    }
+
+    .apostrofe {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 18px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .pantalla-completa {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: white;
+      z-index: 999;
+      padding: 2rem;
+      overflow-y: auto;
+      flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
+      color: #333;
+    }
+
+    body.dark-mode .pantalla-completa {
+      background-color: #111;
+      color: #eee;
+    }
+
+    .pantalla-completa.visible {
+      display: flex;
+    }
+
+    .pantalla-completa h2 {
+      margin-top: 0;
+    }
+
+    .cerrar-btn {
+      align-self: flex-end;
+      background-color: #ccc;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .cerrar-btn {
+      background-color: #444;
+      color: #eee;
+    }
+
+    .titulo-alfabet {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #222;
+    }
+
+    body.dark-mode .titulo-alfabet {
+      color: #ddd;
+    }
+
+    .galeria-abecedari {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      justify-content: flex-start;
+    }
+
+    .letra-galeria {
+      width: calc(20% - 1rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.4rem;
+      color: #555;
+    }
+
+    .letra-galeria small {
+      font-size: 0.75rem;
+      font-weight: normal;
+      color: #888;
+    }
+
+    body.dark-mode .letra-galeria {
+      color: #aaa;
+    }
+
+    body.dark-mode .letra-galeria small {
+      color: #999;
+    }
+
+    .letra-galeria img {
+      width: 100%;
+      height: auto;
+      max-height: 130px;
+      object-fit: contain;
+      margin-bottom: 0.3rem;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .letra-galeria img:hover {
+      transform: scale(1.05) rotateY(5deg);
+      opacity: 0.85;
+    }
+
+    .galeria-abecedari[data-letras-ultima-fila] .letra-galeria:nth-last-child(-n+5) {
+      margin-left: 0 !important;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .cabecera {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .letra-galeria {
+        width: calc(33.333% - 1rem);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .letra-galeria {
+        width: calc(50% - 1rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cabecera">
+    <h1>Emprovador de la font!</h1>
+    <button class="info-btn" onclick="mostrarPantallaCompleta()">ℹ️ Sobre el projecte</button>
+    <button class="mode-btn" id="modeBtn" onclick="toggleModo()">mode fosc</button>
+  </div>
+
+  <textarea id="entrada" placeholder="Escriu per veure les lletres :)"></textarea>
+  <div class="resultado" id="resultado"></div>
+
+  <div class="pantalla-completa" id="pantallaCompleta">
+    <button class="cerrar-btn" onclick="cerrarPantallaCompleta()">❌ Tancar</button>
+    <h2>Sobre el projecte</h2>
+    <p>
+      Aquesta idea neix arran un seguit de dies molt avorrits on vaig estar fent "scrolling" per l'Instagram fins a trobar-ne un post on
+      fent servir el Google Maps, cercaven formes peculiars a la ciutat de Nova York per fer una font tipogràfica. Aviat vaig pensar, això és possible amb la nostra ciutat? 
+      Així doncs, vaig començar l'experiment. Amb dubtes, és clar, però crec que totes les cabòries van marxar tot just ajuntant les 
+      imatges. Amb aquest web, us deixo a vosaltres la tasca de fer de jutges :)  
+    </p>
+    <p>
+      L'objectiu?, portar la imaginació a l'extrem per tenir l'alfabet català sencer. Volia ser mes ambicios pero em feia mandra fer la resta d'alfabets, no vull mentir-vos. 
+    </p>
+    <h2>Enllaços interesants:</h2> 
+    <p>
+      https://www.dailymail.co.uk/news/article-2812814/<br>
+      https://rhettdashwood.com/Google-Maps-Typography<br>
+      https://coopertypography.wordpress.com/2009/07/23/google-maps-typography/
+    </p>
+
+    <div class="titulo-alfabet">L'alfabet sencer</div>
+    <div class="galeria-abecedari" id="galeriaAbecedari"></div>
+
+    <p style="text-align:center; font-style: italic; font-weight: bold; margin-top: 1rem;">
+      Fet per Roger Galbarro Aloy 14/06/25
+    </p>
+  </div>
+
+  <script>
+    const entrada = document.getElementById('entrada');
+    const resultado = document.getElementById('resultado');
+    const modeBtn = document.getElementById('modeBtn');
+
+    entrada.addEventListener('input', () => {
+      resultado.innerHTML = '';
+      const lineas = entrada.value.toUpperCase().split('\n');
+
+      for (const lineaTexto of lineas) {
+        const linea = document.createElement('div');
+        linea.className = 'linea';
+
+        const palabras = lineaTexto.trim().split(/\s+/);
+        for (const palabraTexto of palabras) {
+          const palabra = document.createElement('div');
+          palabra.className = 'palabra';
+
+          for (let i = 0; i < palabraTexto.length; i++) {
+            const letra = palabraTexto[i];
+
+            if (letra === "'") continue;
+
+            if (/[A-ZÇ]/.test(letra)) {
+              const letraContenedor = document.createElement('span');
+              letraContenedor.className = 'letra-container';
+
+              const imgLetra = document.createElement('img');
+              imgLetra.src = `letras/${letra}.jpg`;
+              imgLetra.alt = letra;
+              imgLetra.className = 'letra';
+
+              letraContenedor.appendChild(imgLetra);
+
+              if (i + 1 < palabraTexto.length && palabraTexto[i + 1] === "'") {
+                const imgApostrofe = document.createElement('img');
+                imgApostrofe.src = `letras/'.jpg`;
+                imgApostrofe.alt = 'Apòstrof';
+                imgApostrofe.className = 'apostrofe';
+                letraContenedor.appendChild(imgApostrofe);
+              }
+
+              palabra.appendChild(letraContenedor);
+            }
+          }
+
+          linea.appendChild(palabra);
+        }
+
+        resultado.appendChild(linea);
+      }
+    });
+
+    function mostrarPantallaCompleta() {
+      const pantalla = document.getElementById('pantallaCompleta');
+      pantalla.classList.add('visible');
+
+      const galeria = document.getElementById('galeriaAbecedari');
+      galeria.innerHTML = '';
+
+      const letrasCatalanas = [
+        "A", "B", "C", "Ç", "D",
+        "E", "F", "G", "H", "I",
+        "J", "K", "L", "M", "N",
+        "O", "P", "Q", "R", "S",
+        "T", "U", "V", "W", "X",
+        "Y", "Z"
+      ];
+
+      const ubicacions = {
+        "A": "Carrer Numància, Sants",
+        "B": "Plaça de la Universitat, Eixample",
+        "C": "Carrer d'Aiguablava, Nou Barris",
+        "Ç": "Plaça de Tirant lo Blanc, Sant Martí",
+        "D": "Carrer de Ramon Trias Fargas, Sant Martí",
+        "E": "Passeig de Sant Joan, Eixample",
+        "F": "Av. de Martí Codolar, Horta-Guinardó",
+        "G": "Plaça de Carme Montoriol, Sant Martí",
+        "H": "Passeig Josep Carner, Ciutat Vella",
+        "I": "Plaça de les Glòries Catalanes, Sant Martí",
+        "J": "Plaça de Josep Rovira, Sant Martí",
+        "K": "Calle Berruguete, Horta-Guinardó",
+        "L": "Rambla del Raval, Ciutat Vella",
+        "M": "Carrer de Bolívar, Sant Martí",
+        "N": "Carrer dels Àngels, Ciutat Vella",
+        "O": "Camp Nou, Les Corts",
+        "P": "Carrer de Santander, Sant Martí",
+        "Q": "Plaça de Karl Marx, Nou Barris",
+        "R": "Carrer de l'Harmonia, Horta-Guinardó",
+        "S": "Passeig de Torras i Bages, Sant Andreu",
+        "T": "Av. de l'Estadi, Sants-Montjuïc",
+        "U": "Carrer d'Esteve Terradas, Gracia",
+        "V": "Av. de Can Marcet, Horta-Guinardó",
+        "W": "Carrer de Sant Antoni Maria Claret, Horta-Guinardó",
+        "X": "Carrer del Comte d'Urgell, Eixample",
+        "Y": "Av. Meridiana, Nou Barris",
+        "Z": "Plaça EspanyaCarrer de la Llosa, Nou Barris"
+      };
+
+      letrasCatalanas.forEach((letra) => {
+        const contenedor = document.createElement('div');
+        contenedor.className = 'letra-galeria';
+
+        const img = document.createElement('img');
+        img.src = `letras-demo/${letra}.jpg`;
+        img.alt = letra;
+
+        img.addEventListener('mouseover', () => {
+          img.src = `letras/${letra}.jpg`;
+        });
+
+        img.addEventListener('mouseout', () => {
+          img.src = `letras-demo/${letra}.jpg`;
+        });
+
+        const captionLetra = document.createElement('div');
+        captionLetra.textContent = letra;
+
+        const captionUbicacio = document.createElement('small');
+        captionUbicacio.textContent = ubicacions[letra] || '';
+
+        contenedor.appendChild(img);
+        contenedor.appendChild(captionLetra);
+        contenedor.appendChild(captionUbicacio);
+        galeria.appendChild(contenedor);
+      });
+
+      const total = letrasCatalanas.length;
+      const ultimaFila = total % 5;
+      if (ultimaFila > 0) {
+        galeria.setAttribute('data-letras-ultima-fila', ultimaFila);
+      } else {
+        galeria.removeAttribute('data-letras-ultima-fila');
+      }
+    }
+
+    function cerrarPantallaCompleta() {
+      document.getElementById('pantallaCompleta').classList.remove('visible');
+    }
+
+    function toggleModo() {
+      document.body.classList.toggle('dark-mode');
+      modeBtn.textContent = document.body.classList.contains('dark-mode') ? 'mode clar' : 'mode fosc';
+    }
+  </script>
+</body>
+</html>
