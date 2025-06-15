@@ -208,6 +208,7 @@
       opacity: 0.85;
     }
 
+    /* ✅ Cambios solo para móviles */
     @media (max-width: 480px) {
       h1 {
         font-size: 1.5rem;
@@ -218,12 +219,21 @@
         padding: 0.4rem 0.7rem;
       }
 
+      textarea {
+        font-size: 0.9rem;
+      }
+
       .letra {
-        height: 48px;
+        height: 40px;
+      }
+
+      .apostrofe {
+        height: 14px;
       }
 
       .letra-galeria img {
-        max-width: 80px;
+        max-width: 70px;
+        max-height: 100px;
       }
     }
   </style>
@@ -323,7 +333,6 @@
       }
     });
 
-    // Aquí defines las ubicaciones para cada letra. Cambia el texto a tu gusto.
     const ubicaciones = {
       "A": "Carrer Númancia, Sants",
       "B": "Plaça de la Universitat, Eixample",
@@ -362,12 +371,9 @@
       galeria.innerHTML = '';
 
       const letrasCatalanas = [
-        "A", "B", "C", "Ç", "D",
-        "E", "F", "G", "H", "I",
-        "J", "K", "L", "M", "N",
-        "O", "P", "Q", "R", "S",
-        "T", "U", "V", "W", "X",
-        "Y", "Z"
+        "A", "B", "C", "Ç", "D", "E", "F", "G", "H", "I",
+        "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
+        "T", "U", "V", "W", "X", "Y", "Z"
       ];
 
       letrasCatalanas.forEach((letra) => {
@@ -389,7 +395,6 @@
         captionLetra.textContent = letra;
 
         const captionUbicacio = document.createElement('small');
-        // Si existe la ubicación en el objeto, la usamos, si no, texto por defecto
         captionUbicacio.textContent = ubicaciones[letra] || "Ubicació desconeguda";
 
         contenedor.appendChild(img);
