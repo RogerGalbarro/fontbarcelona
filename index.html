@@ -323,6 +323,37 @@
       }
     });
 
+    // Aquí defines las ubicaciones para cada letra. Cambia el texto a tu gusto.
+    const ubicaciones = {
+      "A": "Carrer Númancia, Sants",
+      "B": "Plaça de la Universitat, Eixample",
+      "C": "Carrer d'Aiguablava, Nou Barris",
+      "Ç": "Plaça de Tirant lo Blanc, Sant Martí",
+      "D": "Carrer de Ramon Trias Fargas, Sant Martí",
+      "E": "Passeig de Sant Joan, Eixample",
+      "F": "Av. de Martí Codolar, Horta-Guinardó",
+      "G": "Plaça de Carme Montoriol, Sant Martí",
+      "H": "Passeig Josep Carner, Ciutat Vella",
+      "I": "Plaça de les Glòries Catalanes, Sant Martí",
+      "J": "Plaça de Josep Rovira, Sant Martí",
+      "K": "Carrer Berruguete, Horta-Guinardó",
+      "L": "Rambla del Raval, Ciutat Vella",
+      "M": "Carrer de Bolívar, Sant Martí",
+      "N": "Carrer dels Àngels, Ciutat Vella",
+      "O": "Camp Nou, Les Corts",
+      "P": "Carrer de Santander, Sant Martí",
+      "Q": "Plaça de Karl Marx, Nou Barris",
+      "R": "Carrer de l'Harmonia, Horta-Guinardó",
+      "S": "Passeig de Torras i Bages, Sant Andreu",
+      "T": "Av. de l'Estadi, Sants-Montjuïc",
+      "U": "Carrer d'Esteve Terradas, Gracia",
+      "V": "Av. de Can Marcet, Horta-Guinardó",
+      "W": "Carrer de Sant Antoni Maria Claret, Horta-Guinardó",
+      "X": "Carrer del Comte d'Urgell, Eixample",
+      "Y": "Av. Meridiana, Nou Barris",
+      "Z": "Carrer de la Llosa, Nou Barris"
+    };
+
     function mostrarPantallaCompleta() {
       const pantalla = document.getElementById('pantallaCompleta');
       pantalla.classList.add('visible');
@@ -358,7 +389,8 @@
         captionLetra.textContent = letra;
 
         const captionUbicacio = document.createElement('small');
-        captionUbicacio.textContent = "Ubicació desconeguda";
+        // Si existe la ubicación en el objeto, la usamos, si no, texto por defecto
+        captionUbicacio.textContent = ubicaciones[letra] || "Ubicació desconeguda";
 
         contenedor.appendChild(img);
         contenedor.appendChild(captionLetra);
